@@ -1,3 +1,6 @@
+//STUDENT NAME: Oleksander Turchyn 
+//STUDENT NUMBER: 300174825
+
 public class Point3D {
     /*getX, getY and getZ methods returning double
         ▪ public double getX()
