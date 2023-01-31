@@ -5,22 +5,29 @@ public class Point3D {
         ▪ public double getZ()
      */
 
-     public double getX(){
-        double x = 0.0;
+     //Global variables 
+     public double x;
+     public double y;
+     public double z;
 
-        return x;
+     //Constructor
+     public Point3D(double x, double y, double z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+     }
+
+     //Getter methods
+     public double getX(){
+        return this.x;
      }
 
      public double getY(){
-        double y = 0.0;
-
-        return y;
+        return this.y;
      }
 
      public double getZ(){
-        double z = 0.0;
-
-        return z;
+        return this.z;
      }
 
      
