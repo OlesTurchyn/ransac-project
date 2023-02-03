@@ -2,23 +2,83 @@
 //STUDENT NUMBER: 300174825
 
 public class Plane3D {
-    
+
+    //Global Variables
+    public double a;
+    public double b;
+    public double c;
+    public double d;
+
+    public Point3D p1;
+    public Point3D p2;
+    public Point3D p3;
+
+    //Constructor
     public Plane3D(Point3D p1, Point3D p2, Point3D p3){
-
-        //p1 = Plane3D(p1.x, p1.y, p1.z, 1.00);
-
-        //xyz xyz xyz 
-        
-        //Compute the equation of the plane with the 3 points using the
-        //Plane3D(a,b,c,d) method as a constructor
-
-        //The plane will look like: 
-        //(Plane3D.a) x + (Plane3D.b) y + (Plane3D.c) z = (Plane3D.d)
-
-
+        this.p1 = p1;
+        this.p2 = p2;
+        this.p3 = p3;
     }
 
+    //Constructor
     public Plane3D(double a, double b, double c, double d){
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+    }
+
+    //Helper method to calculate the plane given three points
+    public Plane3D calculatePlane(Point3D p1, Point3D p2, Point3D p3){
+
+        //To find the equation of a plane given 3 points, we need the normal vector and a point
+
+        //COMPUTING THE NORMAL VECTOR:
+        double vectorA[] = new double[3];
+        double vectorB[] = new double[3];
+
+        vectorA[0] = p2.getX() - p1.getX(); 
+        vectorA[1] = p2.getY() - p1.getY();
+        vectorA[2] = p2.getZ() - p1.getZ(); 
+
+        vectorB[0] = p3.getX() - p1.getX(); 
+        vectorB[1] = p3.getY() - p1.getY();
+        vectorB[2] = p3.getZ() - p1.getZ(); 
+ 
+        double normalVector[] = new double[3];
+
+        normalVector[0] = (vectorA[1] * vectorB[2]) - (vectorA[2] * vectorB[1]);
+        normalVector[1] = (vectorA[2] * vectorB[0]) - (vectorA[0] * vectorB[2]);
+        normalVector[2] = (vectorA[0] * vectorB[1]) - (vectorA[1] * vectorB[0]);
+
+        //Now that we have the normal vector, lets 
+
+        double dValue = (normalVector[0] * -p1.getX()) + 
+                   (normalVector[1] * -p1.getY()) + 
+                   (normalVector[2] * -p1.getZ());
+
+        dValue = dValue * - 1;
+
+        return new Plane3D(normalVector[0], normalVector[1], normalVector[2], dValue);
+    }
+
+    public double getDistance(Point3D pt){
         
+        
+        return 0.0;
+    }
+
+    public static void main(String args[]){
+        System.out.println("Hello World");
+
+        Point3D p1 = new Point3D(1, 2, 3);
+        Point3D p2 = new Point3D(4, 3, 2);
+        Point3D p3 = new Point3D(6, 7, 8);
+
+        Plane3D plane = new Plane3D(p1, p2, p3);
+
+        System.out.println(p1.getY());
+
+
     }
 }
