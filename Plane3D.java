@@ -1,6 +1,8 @@
 //STUDENT NAME: Oleksander Turchyn 
 //STUDENT NUMBER: 300174825
 
+import java.lang.Math;
+
 public class Plane3D {
 
     //Global Variables
@@ -12,6 +14,9 @@ public class Plane3D {
     public Point3D p1;
     public Point3D p2;
     public Point3D p3;
+
+    //Base instance of Plane 3D (empty by default)
+    public static Plane3D SuperPlane = new Plane3D(0.0, 0.0, 0.0, 0.0);
 
     //Constructor
     public Plane3D(Point3D p1, Point3D p2, Point3D p3){
@@ -29,7 +34,7 @@ public class Plane3D {
     }
 
     //Helper method to calculate the plane given three points
-    public Plane3D calculatePlane(Point3D p1, Point3D p2, Point3D p3){
+    public static Plane3D calculatePlane(Point3D p1, Point3D p2, Point3D p3){
 
         //To find the equation of a plane given 3 points, we need the normal vector and a point
 
@@ -59,26 +64,38 @@ public class Plane3D {
 
         dValue = dValue * - 1;
 
-        return new Plane3D(normalVector[0], normalVector[1], normalVector[2], dValue);
+        Plane3D plane = new Plane3D(normalVector[0], normalVector[1], normalVector[2], dValue);
+
+        SuperPlane = plane;
+
+        return plane;
     }
 
-    public double getDistance(Point3D pt){
+    public static double getDistance(Point3D pt){
+        //scale of projection
+
+        //Distance = |normalVector * point|
+        //           -----------------------
+        //                |normalVector|
         
-        
-        return 0.0;
+        return Math.abs((SuperPlane.a * pt.getX()) + (SuperPlane.b * pt.getY()) + (SuperPlane.c * pt.getZ()) + (SuperPlane.d*-1))
+        / Math.sqrt(SuperPlane.a*SuperPlane.a + SuperPlane.b*SuperPlane.b +SuperPlane.c*SuperPlane.c);
     }
 
     public static void main(String args[]){
-        System.out.println("Hello World");
+       
+        Point3D p1 = new Point3D(1, -1, -2);
+        Point3D p2 = new Point3D(2, -2, -3);
+        Point3D p3 = new Point3D(3, 1, 2);
 
-        Point3D p1 = new Point3D(1, 2, 3);
-        Point3D p2 = new Point3D(4, 3, 2);
-        Point3D p3 = new Point3D(6, 7, 8);
+        calculatePlane(p1,p2,p3);
 
-        Plane3D plane = new Plane3D(p1, p2, p3);
+        System.out.println("SUPER PLANE:");
+        System.out.println(SuperPlane.a +  "x + " + SuperPlane.b + "y + " + SuperPlane.c + "z " + "= " +SuperPlane.d);
 
-        System.out.println(p1.getY());
+        Point3D point = new Point3D(1, -1, 2);
 
+        System.out.println("Distance: " + getDistance(point));
 
     }
 }
