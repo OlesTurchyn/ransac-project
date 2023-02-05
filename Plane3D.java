@@ -56,8 +56,6 @@ public class Plane3D {
         normalVector[1] = (vectorA[2] * vectorB[0]) - (vectorA[0] * vectorB[2]);
         normalVector[2] = (vectorA[0] * vectorB[1]) - (vectorA[1] * vectorB[0]);
 
-        //Now that we have the normal vector, lets 
-
         double dValue = (normalVector[0] * -p1.getX()) + 
                    (normalVector[1] * -p1.getY()) + 
                    (normalVector[2] * -p1.getZ());
