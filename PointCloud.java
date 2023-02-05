@@ -100,19 +100,13 @@ public class PointCloud {
                 myWriter.write(x + "\t" + y + " " + z);
                 myWriter.write(System.getProperty( "line.separator" ));
                 
-                System.out.println(x + "    " + y + " " + z);
+                // System.out.println(x + "    " + y + " " + z);
                 
-
                 count++;
 
                 if(count == (superCloud.size())){
                     break;
                 }
-
-                // System.out.println(count);
-
-                // System.out.println(superCloud.size());
-                
                 
             }
 
