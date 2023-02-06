@@ -130,7 +130,7 @@ public class PointCloud {
             System.out.println("An error occurred.");
             e.printStackTrace();
           }
-    }
+        }
 
     Iterator<Point3D> iterator(){
         Iterator<Point3D> it = superCloud.iterator();

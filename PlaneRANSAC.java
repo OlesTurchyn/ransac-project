@@ -1,6 +1,8 @@
 //STUDENT NAME: Oleksander Turchyn 
 //STUDENT NUMBER: 300174825
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.lang.Math;
@@ -64,7 +66,14 @@ public class PlaneRANSAC {
                 System.out.println("HIT");
                 support = dominantPoints.size();
 
-                PointCloud.save(filename);
+                //PointCloud.save(filename);
+
+                try {
+                    savePoints(filename);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
 
         }
@@ -79,6 +88,42 @@ public class PlaneRANSAC {
         return epsilon;
     }
 
+    public void savePoints(String filename) throws IOException{
+        File newFile = new File(filename);
+
+        if(!newFile.exists()){
+            newFile.createNewFile();
+        }
+
+        FileWriter myWriter = new FileWriter(filename);
+
+        int count = 0;
+
+        myWriter.write("x" + "     " + "y" + "     " + "z");
+        myWriter.write(System.getProperty( "line.separator" ));
+
+        for (int i = 0; i < dominantPoints.size(); i++){
+
+            String x = String.valueOf(dominantPoints.get(count).x);
+            String y = String.valueOf(dominantPoints.get(count).y);
+            String z = String.valueOf(dominantPoints.get(count).z);
+
+            myWriter.write(x + "\t" + y + " " + z);
+            myWriter.write(System.getProperty( "line.separator" ));
+            
+            // System.out.println(x + "    " + y + " " + z);
+            
+            count++;
+
+            if(count == (dominantPoints.size())){
+                break;
+            }
+        }
+
+        myWriter.close();
+
+    }
+
     public static void main(String args[]) throws IOException{
         
         setEps(0.5);
@@ -90,7 +135,7 @@ public class PlaneRANSAC {
         int iterations = getNumberOfIterations(0.99, percentageOfPointsOnPlane);
 
 
-        plane.run(iterations, "PointCloud_P1");
+        plane.run(iterations, "PointCloud_P1.xyz");
 
         System.out.println("Number of iterations for 99% confidence: " + iterations);
         
