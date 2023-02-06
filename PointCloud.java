@@ -48,7 +48,7 @@ public class PointCloud {
 
     //Constructor makes an empty PointCloud
     PointCloud(){
-        ArrayList<Point3D> pointCloud = new ArrayList<Point3D>();
+        ArrayList<Point3D> pointCloud = new ArrayList<>();
     }
 
     //Adds point to the PointCloud
@@ -62,9 +62,19 @@ public class PointCloud {
         //generate a random number between 0 and n
         int random = (int) (Math.random() * (superCloud.size()));
 
-        System.out.println("Random index: " + random);
+        //System.out.println("Random index: " + random);
 
         return superCloud.get(random);
+    }
+
+    //Getter method
+    public static int getSize(){
+        return superCloud.size();
+    }
+
+    //Returns a point from the superCloud given an index
+    public static Point3D get(int index){
+        return superCloud.get(index);
     }
 
     //Saves the PointCloud into a .xyz file
@@ -76,6 +86,9 @@ public class PointCloud {
             if (newFile.createNewFile()) {
               System.out.println("File created: " + newFile.getName());
             } else {
+                FileWriter clear = new FileWriter(filename);
+                clear.close();
+
               System.out.println("Error: File already exists.");
             }
           } catch (IOException e) {
@@ -120,9 +133,7 @@ public class PointCloud {
     }
 
     Iterator<Point3D> iterator(){
-        
         Iterator<Point3D> it = superCloud.iterator();
-
         return it;
     }
 
