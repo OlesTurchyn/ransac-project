@@ -14,6 +14,7 @@ public class PlaneRANSAC {
     static Double epsilon = 0.0;
     Plane3D dominantPlane;
 
+    static ArrayList<Point3D> currentPoints = new ArrayList<>();
     static ArrayList<Point3D> dominantPoints = new ArrayList<>();
 
     static double percentageOfPointsOnPlane = 0.0;
@@ -28,14 +29,11 @@ public class PlaneRANSAC {
             double distance = dominantPlane.getDistance(pc.get(i));
 
             if (distance < epsilon){
-                dominantPoints.add(pc.get(i));
+                currentPoints.add(pc.get(i));
             }
         }
 
-        percentageOfPointsOnPlane = (double) dominantPoints.size() / PointCloud.getSize();
-
-        // System.out.println("plane size: " + dominantPoints.size() + "\ncloud size: " +  PointCloud.getSize());
-        // System.out.println("Percentage: " + percentageOfPointsOnPlane);
+        percentageOfPointsOnPlane = (double) currentPoints.size() / PointCloud.getSize();
 
     }
 
@@ -49,24 +47,27 @@ public class PlaneRANSAC {
 
     public void run(int numberOfIterations, String filename){
 
-        int support = dominantPoints.size();
+        //Support is set to first iteration
+        int support = currentPoints.size();
+        System.out.println("SUPPORT: " + support);
 
-        for(int i = 0; i < numberOfIterations; i++){
+        for(int i = 0; i < 2000; i++){
 
             //Clear data structures
-            dominantPoints.clear();
-            //percentageOfPointsOnPlane = 0.0;
+            currentPoints.clear();
 
-            //Generate new Ransac object (random plane)
+            //Generate a new Ransac object (random plane)
+            //This will calculate a random plane and calculate the amount of points on it
             PlaneRANSAC plane = new PlaneRANSAC(pc);
 
+            //Check to see if the randomly selected plane is larger than the current support
+            //System.out.println("random size: " + currentPoints.size());
+            if(currentPoints.size() > support){
 
-            System.out.println("Size: " + plane.dominantPoints.size());
-            if(plane.dominantPoints.size() > support){
+                //If so, set it as the new support and write the points to the file
                 System.out.println("HIT");
-                support = dominantPoints.size();
-
-                //PointCloud.save(filename);
+                support = currentPoints.size();
+                dominantPoints = (ArrayList<Point3D>) currentPoints.clone();
 
                 try {
                     savePoints(filename);
@@ -75,8 +76,13 @@ public class PlaneRANSAC {
                     e.printStackTrace();
                 }
             }
-
         }
+
+        //Now remove the dominant plane from the Point Cloud
+        System.out.println("support size: " + support);
+        System.out.println("size of dominant plane: " + dominantPoints.size());
+        pc.getCloud().removeAll(dominantPoints);
+        
     }
 
     
@@ -88,6 +94,8 @@ public class PlaneRANSAC {
         return epsilon;
     }
 
+
+    //Helper method that saves the points of a dominant plane to a new xyz file
     public void savePoints(String filename) throws IOException{
         File newFile = new File(filename);
 
@@ -126,7 +134,7 @@ public class PlaneRANSAC {
 
     public static void main(String args[]) throws IOException{
         
-        setEps(0.5);
+        setEps(0.1);
         System.out.println("Epsilon value: " + getEps());
 
         pc = new PointCloud("PointCloud3.xyz");
@@ -135,7 +143,7 @@ public class PlaneRANSAC {
         int iterations = getNumberOfIterations(0.99, percentageOfPointsOnPlane);
 
 
-        plane.run(iterations, "PointCloud_P1.xyz");
+        plane.run(iterations, "PointCloud3_P1.xyz");
 
         System.out.println("Number of iterations for 99% confidence: " + iterations);
         

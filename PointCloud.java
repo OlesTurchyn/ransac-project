@@ -77,6 +77,11 @@ public class PointCloud {
         return superCloud.get(index);
     }
 
+    //Returns an instance of the supercloud arraylist
+    public static ArrayList<Point3D> getCloud(){
+        return superCloud;
+    }
+
     //Saves the PointCloud into a .xyz file
     public static void save(String filename){
 
