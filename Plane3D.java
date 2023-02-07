@@ -33,7 +33,7 @@ public class Plane3D {
         this.d = d;
     }
 
-    //Helper method to calculate the plane given three points
+    //Method to calculate the plane given three points
     public static Plane3D calculatePlane(Point3D p1, Point3D p2, Point3D p3){
 
         //To find the equation of a plane given 3 points, we need the normal vector and a point
@@ -64,7 +64,13 @@ public class Plane3D {
 
         Plane3D plane = new Plane3D(normalVector[0], normalVector[1], normalVector[2], dValue);
 
-        SuperPlane = plane;
+        //Set this plane as our global superplane
+        try {
+            SuperPlane = (Plane3D) plane.clone();
+        } catch (CloneNotSupportedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         return plane;
     }
