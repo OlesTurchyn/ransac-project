@@ -62,8 +62,6 @@ public class PointCloud {
         //generate a random number between 0 and n
         int random = (int) (Math.random() * (superCloud.size()));
 
-        //System.out.println("Random index: " + random);
-
         return superCloud.get(random);
     }
 
