@@ -65,16 +65,12 @@ public class Plane3D {
         Plane3D plane = new Plane3D(normalVector[0], normalVector[1], normalVector[2], dValue);
 
         //Set this plane as our global superplane
-        try {
-            SuperPlane = (Plane3D) plane.clone();
-        } catch (CloneNotSupportedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
+        SuperPlane = plane;
+       
         return plane;
     }
 
+    //Computes distance from a given point to the superplane
     public static double getDistance(Point3D pt){
         //scale of projection
 
