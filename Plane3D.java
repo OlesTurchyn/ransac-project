@@ -71,7 +71,7 @@ public class Plane3D {
     }
 
     //Computes distance from a given point to the superplane
-    public static double getDistance(Point3D pt){
+    public double getDistance(Point3D pt){
         //scale of projection
 
         //Distance = |normalVector * point|
@@ -80,22 +80,5 @@ public class Plane3D {
         
         return Math.abs((SuperPlane.a * pt.getX()) + (SuperPlane.b * pt.getY()) + (SuperPlane.c * pt.getZ()) + (SuperPlane.d*-1))
         / Math.sqrt(SuperPlane.a*SuperPlane.a + SuperPlane.b*SuperPlane.b +SuperPlane.c*SuperPlane.c);
-    }
-
-    public static void main(String args[]){
-       
-        Point3D p1 = new Point3D(1, -1, -2);
-        Point3D p2 = new Point3D(2, -2, -3);
-        Point3D p3 = new Point3D(3, 1, 2);
-
-        calculatePlane(p1,p2,p3);
-
-        System.out.println("SUPER PLANE:");
-        System.out.println(SuperPlane.a +  "x + " + SuperPlane.b + "y + " + SuperPlane.c + "z " + "= " +SuperPlane.d);
-
-        Point3D point = new Point3D(1, -1, 2);
-
-        System.out.println("Distance: " + getDistance(point));
-
     }
 }

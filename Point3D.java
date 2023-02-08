@@ -9,9 +9,9 @@ public class Point3D {
      */
 
      //Global variables 
-     public double x;
-     public double y;
-     public double z;
+     private double x;
+     private double y;
+     private double z;
 
      //Constructor
      public Point3D(double x, double y, double z){
@@ -20,7 +20,8 @@ public class Point3D {
         this.z = z;
      }
 
-     //Getter methods
+     //Getter methods:
+
      public double getX(){
         return this.x;
      }

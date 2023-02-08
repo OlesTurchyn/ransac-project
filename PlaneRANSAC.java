@@ -19,11 +19,17 @@ public class PlaneRANSAC {
 
     static double percentageOfPointsOnPlane = 0.0;
 
+    /*Constructor that generates the RANSAC object (random plane)
+        - Generates random plane from given point cloud
+        - calculates which points are based on the plane  
+        - calculates the percentage of points on the plane relative to the point cloud
+    */
     public PlaneRANSAC(PointCloud pc){
         this.pc = pc;
 
         dominantPlane = Plane3D.calculatePlane(pc.getPoint(), pc.getPoint(),pc.getPoint());
 
+        //Iterate through the point cloud to compute and compare each distance
         for(int i = 0; i < pc.getSize(); i++){
 
             double distance = dominantPlane.getDistance(pc.get(i));
@@ -33,24 +39,31 @@ public class PlaneRANSAC {
             }
         }
 
-        percentageOfPointsOnPlane = (double) currentPoints.size() / PointCloud.getSize();
-
+        percentageOfPointsOnPlane = (double) currentPoints.size() / pc.getSize();
     }
 
-
-    public static int getNumberOfIterations(double confidence, double percentageOfPointsOnPlane){
+    //Returns the number of iterations recommended to compute the dominant planes
+    //Based on the first random selection of points
+    public int getNumberOfIterations(double confidence, double percentageOfPointsOnPlane){
+        //User input check
         if(confidence > 1){
             throw new Error("Invalid confidence size. Must be less than 1");
         }
         return (int) (Math.log(1-confidence)/Math.log(1-Math.pow(percentageOfPointsOnPlane,3)));
     }
 
+    //runs the RANSAC algorithm for identifying the dominant plane of the point cloud
     public void run(int numberOfIterations, String filename){
 
         //Support is set to first iteration
         int support = currentPoints.size();
         System.out.println("SUPPORT: " + support);
 
+        /*ATTENTION
+         * I think this loop should be:  i < numberOfIterations
+         * It is set to 2000 for efficiency reasons. Sometimes the given 
+         * variable is very large and takes too much time
+         */ 
         for(int i = 0; i < 2000; i++){
 
             //Clear data structures
@@ -61,11 +74,9 @@ public class PlaneRANSAC {
             PlaneRANSAC plane = new PlaneRANSAC(pc);
 
             //Check to see if the randomly selected plane is larger than the current support
-            //System.out.println("random size: " + currentPoints.size());
             if(currentPoints.size() > support){
 
                 //If so, set it as the new support and write the points to the file
-                System.out.println("HIT");
                 support = currentPoints.size();
                 dominantPoints = (ArrayList<Point3D>) currentPoints.clone();
 
@@ -79,23 +90,31 @@ public class PlaneRANSAC {
         }
 
         //Now remove the dominant plane from the Point Cloud
-        System.out.println("support size: " + support);
-        System.out.println("size of dominant plane: " + dominantPoints.size());
         pc.getCloud().removeAll(dominantPoints);
+
+        //Generate file name for point cloud 
+        String cloudName = filename;
+        StringBuilder sb = new StringBuilder(cloudName);
+        sb.setCharAt(13, '0');
+        cloudName = sb.toString();
+
+        pc.save(cloudName);
         
     }
 
-    
-    public static void setEps(double eps){
+    //Sets the global epsilon value
+    public void setEps(double eps){
         epsilon = eps;
     }
 
-    public static double getEps(){
+    //getter to return the global epsilon
+    public double getEps(){
         return epsilon;
     }
 
 
-    //Helper method that saves the points of a dominant plane to a new xyz file
+    //Helper method that saves the points of the dominant plane to a new xyz file
+    // - used for saving the p1,p2,p3 files of dominant planes
     public void savePoints(String filename) throws IOException{
         File newFile = new File(filename);
 
@@ -110,16 +129,15 @@ public class PlaneRANSAC {
         myWriter.write("x" + "     " + "y" + "     " + "z");
         myWriter.write(System.getProperty( "line.separator" ));
 
+        //Iterate through the dominant point plane to write points to the file
         for (int i = 0; i < dominantPoints.size(); i++){
 
-            String x = String.valueOf(dominantPoints.get(count).x);
-            String y = String.valueOf(dominantPoints.get(count).y);
-            String z = String.valueOf(dominantPoints.get(count).z);
+            String x = String.valueOf(dominantPoints.get(count).getX());
+            String y = String.valueOf(dominantPoints.get(count).getY());
+            String z = String.valueOf(dominantPoints.get(count).getZ());
 
             myWriter.write(x + "\t" + y + " " + z);
             myWriter.write(System.getProperty( "line.separator" ));
-            
-            // System.out.println(x + "    " + y + " " + z);
             
             count++;
 
@@ -132,22 +150,62 @@ public class PlaneRANSAC {
 
     }
 
-    public static void main(String args[]) throws IOException{
-        
-        setEps(0.1);
-        System.out.println("Epsilon value: " + getEps());
+    //Helper method to run the 3 point clouds
+    //Generates required xyz files
+    public static void test(double eps, double confidence) throws IOException{
 
-        pc = new PointCloud("PointCloud3.xyz");
+        //----------PointCloud1-----------------------
+
+        pc = new PointCloud("PointCloud1.xyz");
         PlaneRANSAC plane = new PlaneRANSAC(pc);
 
-        int iterations = getNumberOfIterations(0.99, percentageOfPointsOnPlane);
+        plane.setEps(eps);
 
+        int iterations = plane.getNumberOfIterations(confidence, percentageOfPointsOnPlane);
 
+        //Run 3 iterations to find the 3 most dominant points
+        plane.run(iterations, "PointCloud1_P1.xyz");
+        plane.run(iterations, "PointCloud1_P2.xyz");
+        plane.run(iterations, "PointCloud1_P3.xyz");
+
+        pc.clearCloud();
+
+        //----------PointCloud2-----------------------
+
+        pc = new PointCloud("PointCloud2.xyz");
+        plane = new PlaneRANSAC(pc);
+
+        iterations = plane.getNumberOfIterations(confidence, percentageOfPointsOnPlane);
+
+        //Run 3 iterations to find the 3 most dominant points
+        plane.run(iterations, "PointCloud2_P1.xyz");
+        plane.run(iterations, "PointCloud2_P2.xyz");
+        plane.run(iterations, "PointCloud2_P3.xyz");
+
+        pc.clearCloud();
+
+        //----------PointCloud3-----------------------
+
+        pc = new PointCloud("PointCloud3.xyz");
+        plane = new PlaneRANSAC(pc);
+
+        iterations = plane.getNumberOfIterations(confidence, percentageOfPointsOnPlane);
+
+        //Run 3 iterations to find the 3 most dominant points
         plane.run(iterations, "PointCloud3_P1.xyz");
+        plane.run(iterations, "PointCloud3_P2.xyz");
+        plane.run(iterations, "PointCloud3_P3.xyz");
 
-        System.out.println("Number of iterations for 99% confidence: " + iterations);
+    }
+
+    public static void main(String args[]) throws IOException{
         
-        // System.out.println("Percentage of points on the plane " + percentageOfPointsOnPlane);
+        //run our test method to generate everything
+        //I wasn't sure how else to execute this. 
+        //I hope this is ok for you TA
+
+        //We can set the epsilon and confidence here
+        test(0.1,0.99);
 
     }
 

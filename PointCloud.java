@@ -10,18 +10,16 @@ public class PointCloud {
    //Global pointCloud array list
     static ArrayList<Point3D> superCloud = new ArrayList<Point3D>();
 
-    //Constructor
+    //Constructor to produce a pointcloud given an xyz file
     PointCloud(String filename) throws IOException{
-        //TO CHANGE PATH
-        File file = new File("C:\\Users\\Oles\\Desktop\\dev\\ransac-project\\" + filename);
+        File file = new File(filename);
 
         //Exception handling to identify and read the input file
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
 
             String st;
-            int count = 0;
-
+        
             //Reads and ignores the first line 
             br.readLine();
 
@@ -32,10 +30,7 @@ public class PointCloud {
                 superCloud.add(new Point3D(Double.parseDouble(points[0]), 
                                            Double.parseDouble(points[1]), 
                                            Double.parseDouble(points[2])));
-                
-                //System.out.println(superCloud.get(count).z);
-
-                count++;
+            
            }
 
         } catch (FileNotFoundException e) {
@@ -43,10 +38,9 @@ public class PointCloud {
             System.out.println("ERROR: File not found");
             e.printStackTrace();
         }
-
     }
 
-    //Constructor makes an empty PointCloud
+    //Constructor to make an empty PointCloud
     PointCloud(){
         ArrayList<Point3D> pointCloud = new ArrayList<>();
     }
@@ -57,7 +51,7 @@ public class PointCloud {
     }
 
     //Returns a random point from the PointCloud
-    static Point3D getPoint(){
+    Point3D getPoint(){
 
         //generate a random number between 0 and n
         int random = (int) (Math.random() * (superCloud.size()));
@@ -65,23 +59,28 @@ public class PointCloud {
         return superCloud.get(random);
     }
 
-    //Getter method
-    public static int getSize(){
+    //Getter method returns supercloud size
+    public int getSize(){
         return superCloud.size();
     }
 
     //Returns a point from the superCloud given an index
-    public static Point3D get(int index){
+    public Point3D get(int index){
         return superCloud.get(index);
     }
 
     //Returns an instance of the supercloud arraylist
-    public static ArrayList<Point3D> getCloud(){
+    public ArrayList<Point3D> getCloud(){
         return superCloud;
     }
 
+    //Clears the supercloud arraylist
+    public void clearCloud(){
+        superCloud.clear();
+    }
+
     //Saves the PointCloud into a .xyz file
-    public static void save(String filename){
+    public void save(String filename){
 
         //Structure borrowed from W3 Schools. Listed in references:
         try {
@@ -91,8 +90,6 @@ public class PointCloud {
             } else {
                 FileWriter clear = new FileWriter(filename);
                 clear.close();
-
-              System.out.println("Error: File already exists.");
             }
           } catch (IOException e) {
             System.out.println("An error occurred.");
@@ -109,9 +106,9 @@ public class PointCloud {
 
             while (superCloud.iterator().hasNext()){
 
-                String x = String.valueOf(superCloud.get(count).x);
-                String y = String.valueOf(superCloud.get(count).y);
-                String z = String.valueOf(superCloud.get(count).z);
+                String x = String.valueOf(superCloud.get(count).getX());
+                String y = String.valueOf(superCloud.get(count).getY());
+                String z = String.valueOf(superCloud.get(count).getZ());
 
                 myWriter.write(x + "\t" + y + " " + z);
                 myWriter.write(System.getProperty( "line.separator" ));
@@ -139,25 +136,5 @@ public class PointCloud {
         Iterator<Point3D> it = superCloud.iterator();
         return it;
     }
-
-    public static void main(String args[]){
-
-       try {
-        PointCloud pointC = new PointCloud("PointCloud3.xyz");
-    } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    }
-
-    Point3D randomPoint = getPoint();
-
-    System.out.println("Random Point: " + randomPoint.x + " " + randomPoint.y + " " + randomPoint.z);
-
-
-    save("test.xyz");
-
-    }
-
-
     
 }
